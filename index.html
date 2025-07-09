@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ukiku Web</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <header>
+        <div class="navbar">
+            <div class="logo">
+                <h1>Ukiku</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active" data-target="home">Inicio</a></li>
+                    <li><a href="#" data-target="anime-list">Lista de Animes</a></li>
+                    <li><a href="#" data-target="favorites-container">Favoritos</a></li>
+                    <li><a href="#" data-target="settings">Configuración</a></li>
+                    <li><a href="login.html" id="login-link">Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="search-bar">
+        <input type="text" id="search-input" placeholder="Buscar anime..." oninput="searchAnime()">
+    </section>
+
+    <main>
+        <section id="home" class="section active">
+            <h2>Bienvenido a Ukiku Web</h2>
+            <h3>Animes Recientes</h3>
+            <div id="recent-anime-container" class="anime-container"></div>
+            <div id="inicioListContainer"></div>
+        </section>
+
+        <section id="anime-list" class="section">
+            <h2>Lista de Animes</h2>
+            <div id="anime-list-container"></div>
+            <div id="new-anime-container" class="anime-container"></div>
+            <div id="animeListContainer"></div>
+        </section>
+        <section id="episodes" class="section">
+            <div id="episodes-container"></div>
+        </section>
+        
+
+        <section id="favorites-container" class="section">
+            <h2>Favoritos</h2>
+            <div id="favorites-list"></div>
+        </section>
+        
+        </section>
+        <section id="episodes" class="section">
+            <div id="episodes-container"></div>
+        </section>
+
+        <section id="settings" class="section">
+            <h2>Configuración</h2>
+            <label for="language-select">Idioma:</label>
+        <select id="language-selector">
+            <option value="es">Español</option>
+            <option value="en">English</option>
+        </select>
+  
+            <label for="theme-select">Tema:</label>
+            <select id="theme-select">
+                <option value="dark">Oscuro</option>
+                <option value="light">Claro</option>
+            </select>
+        </section>
+        <section id="anime-details-section" class="section">
+            <div id="anime-details"></div>
+        </section>
+    </main>
+
+    <script src="/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginLink = document.getElementById('login-link');
+    
+            if (loginLink) {
+                loginLink.addEventListener('click', (event) => {
+                    event.preventDefault(); 
+                    window.location.href = 'login.html'; 
+                });
+            }
+        });
+    </script>
+</body>
+</html>

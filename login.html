@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Ukiku Web</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+    <main class="main-container">
+        <section id="login-section" class="login-section">
+            <div class="form-container">
+                <header class="form-header">
+                    <h1 class="form-title">Inicia Sesión</h1>
+                    <p class="form-subtitle">Accede a tu cuenta</p>
+                </header>
+                <form id="login-form" class="form">
+                    <div class="form-group">
+                        <label for="email" class="form-label">Correo Electrónico</label>
+                        <input type="email" id="email" name="email" class="form-input" placeholder="ejemplo@correo.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="form-button">Iniciar Sesión</button>
+                    </div>
+                </form>
+                <footer class="form-footer">
+                    <p class="form-footer-text">¿No tienes una cuenta? <a href="/register.html" class="form-link">Regístrate</a></p>
+                </footer>
+                <div class="back-button-container">
+                    <button id="back-button" class="form-button back-button">Volver atrás</button>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="/js/login.js"></script>
+    <script>
+        document.getElementById('back-button').addEventListener('click', () => {
+            window.history.back();
+        });
+    </script>
+</body>
+</html>
