@@ -25,13 +25,19 @@ tabs.forEach(tab => {
 
         sections.forEach(section => section.classList.remove('active'));
         document.getElementById(target).classList.add('active');
-        
         tabs.forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
+        searchInput.value = "";
+        recentAnimeContainer.innerHTML = "";
+
+        if (target === 'home') {
+            loadRecentAnimes();
+        }
 
         if (target === 'anime-list') {
             loadAllAnimes();
         }
+
         if (target === 'favorites-container') {
             loadFavorites();
         }
@@ -81,7 +87,7 @@ async function loadAllAnimes() {
             return new Promise(resolve => setTimeout(resolve, ms));
         }
 
-        while (page <= 80) {  
+        while (page <= 5) {  
             const response = await fetch(`https://api.jikan.moe/v4/anime?page=${page}`);
             if (!response.ok) throw new Error(`API error: ${response.status}`);
 
