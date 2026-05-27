@@ -7,6 +7,13 @@ const actionAnimeContainer = document.getElementById('action-anime-container');
 const episodesContainer = document.getElementById('episodes-container');
 const animeListContainer = document.getElementById('anime-list-container');
 const favoritesListContainer = document.getElementById('favorites-list');
+const themeSelect = document.getElementById('theme-select');
+const languageSelect = document.getElementById('language-selector');
+const themeToggle = document.getElementById('theme-toggle');
+const autoplayToggle = document.getElementById('autoplay-toggle');
+const qualitySelector = document.getElementById('quality-selector');
+const datasaverToggle = document.getElementById('datasaver-toggle');
+const clearDataBtn = document.getElementById('clear-data-btn');
 let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
 let searchTimeout = null;
 
@@ -65,7 +72,8 @@ async function searchAnime() {
 
 async function loadAllAnimes() {
     let page = 1;
-    animeListContainer.innerHTML = '<p id="loadingMessage">Cargando todos los animes...</p>';
+    const currentLang = localStorage.getItem('ukiku_lang') || 'es';
+    animeListContainer.innerHTML = `<p id="loadingMessage" data-i18n="loading_animes">${translations[currentLang].loading_animes}</p>`;
 
     try {
         function delay(ms) {
@@ -273,3 +281,152 @@ function loadFavorites() {
 
 loadRecentAnimes();
 if (typeof loadCategorizedAnimes === 'function') loadCategorizedAnimes();
+
+const translations = {
+    es: {
+        nav_home: "Inicio",
+        nav_list: "Lista de Animes",
+        nav_fav: "Favoritos",
+        nav_settings: "Configuración",
+        nav_login: "Login",
+        home_title: "Bienvenido a Ukiku Web",
+        home_recent: "Animes Recientes",
+        search_placeholder: "Buscar anime...",
+        list_title: "Lista de Animes",
+        fav_title: "Favoritos",
+        settings_title: "Configuración",
+        settings_lang: "Idioma:",
+        lang_es: "Español",
+        lang_en: "English",
+        settings_theme: "Tema:",
+        theme_dark: "Oscuro",
+        theme_light: "Claro",
+        loading_animes: "Cargando todos los animes...",
+        set_grp_general: "General",
+        set_grp_playback: "Reproducción",
+        set_autoplay: "Autoplay",
+        set_quality: "Calidad",
+        set_grp_data: "Datos",
+        set_datasaver: "Ahorro de Datos",
+        set_cleardata: "Borrar Datos Locales"
+    },
+    en: {
+        nav_home: "Home",
+        nav_list: "Anime List",
+        nav_fav: "Favorites",
+        nav_settings: "Settings",
+        nav_login: "Login",
+        home_title: "Welcome to Ukiku Web",
+        home_recent: "Recent Anime",
+        search_placeholder: "Search anime...",
+        list_title: "Anime List",
+        fav_title: "Favorites",
+        settings_title: "Settings",
+        settings_lang: "Language:",
+        lang_es: "Spanish",
+        lang_en: "English",
+        settings_theme: "Theme:",
+        theme_dark: "Dark",
+        theme_light: "Light",
+        loading_animes: "Loading all animes...",
+        set_grp_general: "General",
+        set_grp_playback: "Playback",
+        set_autoplay: "Autoplay",
+        set_quality: "Quality",
+        set_grp_data: "Data",
+        set_datasaver: "Data Saver",
+        set_cleardata: "Clear Local Data"
+    }
+};
+
+function applyLanguage(lang) {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+            el.textContent = translations[lang][key];
+        }
+    });
+
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (translations[lang] && translations[lang][key]) {
+            el.placeholder = translations[lang][key];
+        }
+    });
+}
+
+function loadSettings() {
+    const savedTheme = localStorage.getItem('ukiku_theme') || 'dark';
+    const savedLang = localStorage.getItem('ukiku_lang') || 'es';
+    const savedAutoplay = localStorage.getItem('ukiku_autoplay') !== 'false';
+    const savedQuality = localStorage.getItem('ukiku_quality') || '1080p';
+    const savedDataSaver = localStorage.getItem('ukiku_datasaver') === 'true';
+
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-theme');
+        if (themeToggle) themeToggle.checked = true;
+    } else {
+        document.body.classList.remove('light-theme');
+        if (themeToggle) themeToggle.checked = false;
+    }
+
+    if (languageSelect) languageSelect.value = savedLang;
+    if (autoplayToggle) autoplayToggle.checked = savedAutoplay;
+    if (qualitySelector) qualitySelector.value = savedQuality;
+    if (datasaverToggle) datasaverToggle.checked = savedDataSaver;
+
+    applyLanguage(savedLang);
+}
+
+if (themeToggle) {
+    themeToggle.addEventListener('change', (e) => {
+        if (e.target.checked) {
+            document.body.classList.add('light-theme');
+            localStorage.setItem('ukiku_theme', 'light');
+        } else {
+            document.body.classList.remove('light-theme');
+            localStorage.setItem('ukiku_theme', 'dark');
+        }
+    });
+}
+
+if (languageSelect) {
+    languageSelect.addEventListener('change', (e) => {
+        const selectedLang = e.target.value;
+        localStorage.setItem('ukiku_lang', selectedLang);
+        applyLanguage(selectedLang);
+    });
+}
+
+if (autoplayToggle) {
+    autoplayToggle.addEventListener('change', (e) => {
+        localStorage.setItem('ukiku_autoplay', e.target.checked);
+    });
+}
+
+if (qualitySelector) {
+    qualitySelector.addEventListener('change', (e) => {
+        localStorage.setItem('ukiku_quality', e.target.value);
+    });
+}
+
+if (datasaverToggle) {
+    datasaverToggle.addEventListener('change', (e) => {
+        localStorage.setItem('ukiku_datasaver', e.target.checked);
+    });
+}
+
+if (clearDataBtn) {
+    clearDataBtn.addEventListener('click', () => {
+        const currentLang = localStorage.getItem('ukiku_lang') || 'es';
+        const msg = currentLang === 'es' ? '¿Borrar todos los datos y favoritos?' : 'Clear all data and favorites?';
+        
+        if (confirm(msg)) {
+            localStorage.clear();
+            location.reload();
+        }
+    });
+}
+
+loadSettings();
+loadRecentAnimes();

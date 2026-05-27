@@ -380,3 +380,184 @@ main {
     color: #ff4c4c;
     box-shadow: 0 0 12px #ff4c4c;
 }
+
+body.light-theme {
+    background-color: #f4f4f9 !important;
+    color: #141414 !important;
+}
+
+body.light-theme header {
+    background-color: #ffffff !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme nav ul li a {
+    color: #333 !important;
+}
+
+body.light-theme nav ul li a:hover,
+body.light-theme nav ul li a.active {
+    color: #ff6f61 !important;
+}
+
+body.light-theme .search-bar {
+    background-color: #e8e8e8 !important;
+}
+
+body.light-theme #search-input {
+    background-color: #ffffff !important;
+    color: #333 !important;
+    border: 1px solid #ccc;
+}
+
+body.light-theme .anime-card,
+body.light-theme .episode-card {
+    background-color: #ffffff !important;
+    color: #141414 !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .anime-card h3,
+body.light-theme .episode-card h3 {
+    color: #ff6f61 !important;
+}
+
+body.light-theme .episode-card p {
+    color: #555 !important;
+}
+
+body.light-theme .favorite-btn {
+    background-color: #f0f0f0 !important;
+    color: #333 !important;
+    border: 1px solid #ddd;
+}
+
+.settings-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.settings-main-title {
+    text-align: center;
+    color: #ff6f61;
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+}
+
+.settings-group {
+    background-color: #1f1f1f;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    padding: 15px 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.settings-group h3 {
+    font-size: 0.85rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 8px;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #333;
+}
+
+.setting-item:last-child {
+    border-bottom: none;
+}
+
+.setting-item span {
+    font-size: 1rem;
+    color: #ddd;
+    font-weight: 500;
+}
+
+.ukiku-select {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    outline: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.ukiku-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.ukiku-switch input { opacity: 0; width: 0; height: 0; }
+
+.ukiku-slider {
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #555; border-radius: 24px; transition: .3s;
+}
+
+.ukiku-slider:before {
+    position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+    background-color: white; border-radius: 50%; transition: .3s;
+}
+
+.ukiku-switch input:checked + .ukiku-slider { background-color: #ff6f61; }
+.ukiku-switch input:checked + .ukiku-slider:before { transform: translateX(20px); }
+
+.ukiku-danger-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: transparent;
+    color: #ff4c4c;
+    border: 1px solid #ff4c4c;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+.ukiku-danger-btn:hover {
+    background-color: #ff4c4c;
+    color: white;
+}
+
+body.light-theme {
+    background-color: #f4f4f9;
+    color: #141414;
+}
+
+body.light-theme header { background-color: #ffffff; }
+body.light-theme nav ul li a { color: #333; }
+body.light-theme nav ul li a:hover, body.light-theme nav ul li a.active { color: #ff6f61; }
+body.light-theme .search-bar { background-color: #e8e8e8; }
+body.light-theme #search-input { background-color: #ffffff; color: #333; }
+
+body.light-theme .anime-card, 
+body.light-theme .episode-card {
+    background-color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+body.light-theme .anime-card h3 { color: #ff6f61; }
+body.light-theme .episode-card p { color: #555; }
+body.light-theme .favorite-btn { background-color: #f0f0f0; color: #333; }
+
+body.light-theme .settings-group {
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+body.light-theme .settings-group h3 { color: #888; border-bottom: 1px solid #eee; }
+body.light-theme .setting-item { border-bottom: 1px solid #eee; }
+body.light-theme .setting-item:last-child { border-bottom: none; }
+body.light-theme .setting-item span { color: #333; }
+body.light-theme .ukiku-select { background-color: #f0f0f0; color: #333; }
+body.light-theme .ukiku-slider { background-color: #ccc; }

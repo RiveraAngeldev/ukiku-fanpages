@@ -15,63 +15,101 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="#" class="active" data-target="home">Inicio</a></li>
-                    <li><a href="#" data-target="anime-list">Lista de Animes</a></li>
-                    <li><a href="#" data-target="favorites-container">Favoritos</a></li>
-                    <li><a href="#" data-target="settings">Configuración</a></li>
-                    <li><a href="login/login.html" id="login-link">Login</a></li>
+                    <li><a href="#" class="active" data-target="home" data-i18n="nav_home">Inicio</a></li>
+                    <li><a href="#" data-target="anime-list" data-i18n="nav_list">Lista de Animes</a></li>
+                    <li><a href="#" data-target="favorites-container" data-i18n="nav_fav">Favoritos</a></li>
+                    <li><a href="#" data-target="settings" data-i18n="nav_settings">Configuración</a></li>
+                    <li><a href="login.html" id="login-link" data-i18n="nav_login">Login</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
     <section class="search-bar">
-        <input type="text" id="search-input" placeholder="Buscar anime..." oninput="searchAnime()">
+        <input type="text" id="search-input" placeholder="Buscar anime..." data-i18n-placeholder="search_placeholder" oninput="searchAnime()">
     </section>
 
     <main>
         <section id="home" class="section active">
-            <h2>Bienvenido a Ukiku Web</h2>
-            <h3>Animes Recientes</h3>
+            <h2 data-i18n="home_title">Bienvenido a Ukiku Web</h2>
+            <h3 data-i18n="home_recent">Animes Recientes</h3>
             <div id="recent-anime-container" class="anime-container"></div>
             <div id="inicioListContainer"></div>
         </section>
 
         <section id="anime-list" class="section">
-            <h2>Lista de Animes</h2>
+            <h2 data-i18n="list_title">Lista de Animes</h2>
             <div id="anime-list-container"></div>
             <div id="new-anime-container" class="anime-container"></div>
             <div id="animeListContainer"></div>
         </section>
-        <section id="episodes" class="section">
-            <div id="episodes-container"></div>
-        </section>
-        
 
         <section id="favorites-container" class="section">
-            <h2>Favoritos</h2>
+            <h2 data-i18n="fav_title">Favoritos</h2>
             <div id="favorites-list"></div>
         </section>
         
-        </section>
         <section id="episodes" class="section">
             <div id="episodes-container"></div>
         </section>
 
-        <section id="settings" class="section">
-            <h2>Configuración</h2>
-            <label for="language-select">Idioma:</label>
-        <select id="language-selector">
-            <option value="es">Español</option>
-            <option value="en">English</option>
-        </select>
-  
-            <label for="theme-select">Tema:</label>
-            <select id="theme-select">
-                <option value="dark">Oscuro</option>
-                <option value="light">Claro</option>
-            </select>
+<section id="settings" class="section">
+            <div class="settings-container">
+                <h2 class="settings-main-title" data-i18n="settings_title">Configuración</h2>
+                
+                <div class="settings-group">
+                    <h3 data-i18n="set_grp_general">General</h3>
+                    <div class="setting-item">
+                        <span data-i18n="settings_lang">Idioma</span>
+                        <select id="language-selector" class="ukiku-select">
+                            <option value="es" data-i18n="lang_es">Español</option>
+                            <option value="en" data-i18n="lang_en">English</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <span data-i18n="settings_theme">Modo Claro</span>
+                        <label class="ukiku-switch">
+                            <input type="checkbox" id="theme-toggle">
+                            <span class="ukiku-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <h3 data-i18n="set_grp_playback">Reproducción</h3>
+                    <div class="setting-item">
+                        <span data-i18n="set_autoplay">Autoplay</span>
+                        <label class="ukiku-switch">
+                            <input type="checkbox" id="autoplay-toggle" checked>
+                            <span class="ukiku-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <span data-i18n="set_quality">Calidad</span>
+                        <select id="quality-selector" class="ukiku-select">
+                            <option value="1080p">1080p</option>
+                            <option value="720p">720p</option>
+                            <option value="480p">480p</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <h3 data-i18n="set_grp_data">Datos</h3>
+                    <div class="setting-item">
+                        <span data-i18n="set_datasaver">Ahorro de Datos</span>
+                        <label class="ukiku-switch">
+                            <input type="checkbox" id="datasaver-toggle">
+                            <span class="ukiku-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item" style="border-bottom: none; padding-bottom: 0;">
+                        <button id="clear-data-btn" class="ukiku-danger-btn" data-i18n="set_cleardata">Borrar Datos Locales</button>
+                    </div>
+                </div>
+            </div>
         </section>
+
         <section id="anime-details-section" class="section">
             <div id="anime-details"></div>
         </section>
