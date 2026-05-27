@@ -16,6 +16,7 @@ const datasaverToggle = document.getElementById('datasaver-toggle');
 const clearDataBtn = document.getElementById('clear-data-btn');
 let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
 let searchTimeout = null;
+if (!favorites) favorites = [];
 
 tabs.forEach(tab => {
     tab.addEventListener('click', (e) => {
@@ -50,7 +51,7 @@ async function searchAnime() {
     }
 
     try {
-        const response = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(searchText)}`);
+        const response = await fetch(`http://localhost:3000/api/search?q=${encodeURIComponent(searchText)}`);
         if (!response.ok) throw new Error(`API error: ${response.status}`);
         const data = await response.json();
         const animes = data.data;
@@ -152,104 +153,204 @@ function createAnimeCard(anime) {
     const animeCard = document.createElement('div');
     animeCard.classList.add('anime-card');
 
+    const image = anime.images?.jpg?.image_url || anime.images?.webp?.image_url || "https://via.placeholder.com/200x300?text=No+Image";
+
+    const title = anime.title || 'Sin título';
+
     const isFavorite = favorites.some(fav => fav.mal_id === anime.mal_id);
 
     animeCard.innerHTML = `
-        <img src="${anime.images.jpg.image_url}" alt="${anime.title}" loading="lazy">
-        <h3>${anime.title}</h3>
+        <img src="${image}" alt="${title}" loading="lazy">
+        <h3>${title}</h3>
         <button data-anime-id="${anime.mal_id}" class="favorite-btn">
             ${isFavorite ? '❤️ Favorito' : '♡ Añadir a favoritos'}
         </button>
     `;
 
     animeCard.addEventListener('click', (e) => {
-        if (!e.target.classList.contains('favorite-btn')) {
-            loadEpisodes(anime.mal_id, anime.title);
-        }
+    if (e.target.closest('.favorite-btn')) return;
+    loadEpisodes(anime.mal_id, anime.title);
     });
 
     animeCard.querySelector('.favorite-btn').addEventListener('click', (e) => {
-        e.stopPropagation(); // Evita que el clic active la tarjeta
+        e.stopPropagation();
+
         const id = anime.mal_id;
         const index = favorites.findIndex(fav => fav.mal_id === id);
 
+        let isFavorite = false;
+
         if (index > -1) {
             favorites.splice(index, 1);
-            e.target.textContent = '♡ Añadir a favoritos';
-            updateFavoriteIcons(id, false);
+            isFavorite = false;
         } else {
             favorites.push(anime);
-            e.target.textContent = '❤️ Favorito';
-            updateFavoriteIcons(id, true);
+            isFavorite = true;
         }
+
         localStorage.setItem('favorites', JSON.stringify(favorites));
+        
+        e.target.textContent = isFavorite
+        ? '❤️ Favorito'
+        : '♡ Añadir a favoritos';
+        
         loadFavorites();
+        syncFavoritesUI();
     });
 
     return animeCard;
 }
 
 function updateFavoriteIcons(animeId, isFavorite) {
-    const favButtons = document.querySelectorAll(`button.favorite-btn[data-anime-id="${animeId}"]`);
+    const favButtons = document.querySelectorAll(
+        `button.favorite-btn[data-anime-id="${animeId}"]`
+    );
+
     favButtons.forEach(button => {
-        button.textContent = isFavorite ? '❤️ Favorito' : '♡ Añadir a favoritos';
+        button.textContent = isFavorite
+            ? '❤️ Favorito'
+            : '♡ Añadir a favoritos';
     });
 }
 
 async function loadEpisodes(animeId, animeTitle) {
     try {
         const response = await fetch(`https://api.jikan.moe/v4/anime/${animeId}/episodes`);
-        if (!response.ok) throw new Error(`API error: ${response.status}`);
-        const data = await response.json();
-        const episodes = data.data;
 
-        let watchedEpisodes = JSON.parse(localStorage.getItem('watchedEpisodes')) || {};
-        if (!watchedEpisodes[animeId]) watchedEpisodes[animeId] = [];
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const episodes = data.data || [];
+
+        let watchedEpisodes =
+            JSON.parse(localStorage.getItem('watchedEpisodes')) || {};
+
+        if (!watchedEpisodes[animeId]) {
+            watchedEpisodes[animeId] = [];
+        }
+
+        const watchedList = watchedEpisodes[animeId] || [];
+
+        const animeSlug = animeTitle
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9\s]/g, "")
+            .trim()
+            .replace(/\s+/g, "-");
 
         episodesContainer.innerHTML = `
             <h2>Episodios de ${animeTitle}</h2>
+
             <div class="episode-list">
-                ${episodes
-                    .map(episode => {
-                        const watched = watchedEpisodes[animeId].includes(episode.mal_id);
-                        return `
-                            <div class="episode-card" data-episode-id="${episode.mal_id}" style="${watched ? 'border: 3px solid #ff6f61;' : 'border: 1px solid #ccc;'}">
-                                <h3>${episode.title}</h3>
-                                <p>Episodio ${episode.mal_id}</p>
-                                <a href="${episode.url}" target="_blank" rel="noopener noreferrer" class="view-episode">Ver ahora</a>
-                            </div>
-                        `;
-                    })
-                    .join('')}
+                ${episodes.length > 0
+                    ? episodes.map((episode, index) => {
+
+                        const episodeNumber = episode.mal_id || (index + 1);
+
+                        const watched = watchedList.includes(episode.mal_id);
+
+                        const watchLink = `http://localhost:3000/api/watch?anime=${encodeURIComponent(animeTitle)}&episode=${episodeNumber}`;
+
+                        const fallback =
+                            episode.url ||
+                            `https://myanimelist.net/anime/${animeId}`;
+
+                    return `
+                        <div class="episode-card"
+                            data-episode-id="${episode.mal_id}"
+                            style="${watched
+                                ? 'border: 3px solid #ff6f61;'
+                                : 'border: 1px solid #ccc;'}">
+
+                            <h3>${episode.title || `Episodio ${episodeNumber}`}</h3>
+                            <p>Episodio ${episodeNumber}</p>
+
+                            <button class="view-episode"
+                                data-anime="${animeTitle}"
+                                data-episode="${episodeNumber}">
+                                Ver episodio
+                            </button>
+
+                            <a href="${fallback}"
+                            target="_blank"
+                            style="display:block;font-size:12px;opacity:0.6;margin-top:5px;">
+                            fallback
+                            </a>
+                        </div>
+                    `;
+                    }).join('')
+                    : `<p>No hay episodios disponibles.</p>`
+                }
             </div>
         `;
 
-        const viewEpisodeLinks = episodesContainer.querySelectorAll('.view-episode');
-        viewEpisodeLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault(); 
-
-                const episodeCard = e.target.closest('.episode-card');
-                const episodeId = parseInt(episodeCard.getAttribute('data-episode-id'), 10);
-
-                if (!watchedEpisodes[animeId].includes(episodeId)) {
-                    watchedEpisodes[animeId].push(episodeId);
-                    episodeCard.style.border = '3px solid #ff6f61'; 
-                    localStorage.setItem('watchedEpisodes', JSON.stringify(watchedEpisodes));
-                }
-
-                window.open(link.href, '_blank', 'noopener');
-            });
-        });
-
-        sections.forEach(section => section.classList.remove('active'));
+        sections.forEach(s => s.classList.remove('active'));
         document.getElementById('episodes').classList.add('active');
+
     } catch (error) {
-        console.error("Error al cargar episodios:", error);
-        episodesContainer.innerHTML = `<p>Ocurrió un error al cargar los episodios: ${error.message}</p>`;
+        console.error("Error en loadEpisodes:", error);
+
+        episodesContainer.innerHTML = `
+            <p>Error al cargar episodios: ${error.message}</p>
+        `;
     }
 }
 
+document.addEventListener("click", async (e) => {
+    const btn = e.target.closest(".view-episode");
+    if (!btn) return;
+
+    const anime = btn.dataset.anime;
+    const episode = btn.dataset.episode;
+
+    try {
+        const res = await fetch(
+            `http://localhost:3000/api/watch?anime=${encodeURIComponent(anime)}&episode=${episode}`
+        );
+
+        const data = await res.json();
+
+        console.log("STREAM DATA:", data);
+
+        if (!data.url) {
+            alert("No video found");
+            return;
+        }
+        const player = document.getElementById("player");
+        player.src = data.url;      
+
+    } catch (err) {
+        console.error("FULL ERROR:", err);
+        alert(err.message);
+    }
+});
+
+
+async function playEpisode(anime, episode) {
+    try {
+        const res = await fetch(
+            `http://localhost:3000/api/watch?anime=${encodeURIComponent(anime)}&episode=${episode}`
+        );
+
+        const data = await res.json();
+
+        console.log("STREAM:", data);
+
+        if (!data.url) {
+            alert("No video found");
+            return;
+        }
+
+        document.getElementById("player").src = data.url;
+
+    } catch (err) {
+        console.error(err);
+        alert("Error loading stream");
+    }
+}
 
 function loadFavorites() {
     favoritesListContainer.innerHTML = '';
@@ -260,26 +361,46 @@ function loadFavorites() {
     }
 
     favorites.forEach(fav => {
+        const img =
+            fav.images?.jpg?.image_url ||
+            fav.images?.webp?.image_url ||
+            "https://via.placeholder.com/100x150?text=No+Image";
+
         const animeCard = document.createElement('div');
         animeCard.classList.add('favorite-anime-card');
+
         animeCard.innerHTML = `
-            <img src="${fav.images.jpg.image_url}" alt="${fav.title}" loading="lazy" width="100">
+            <img src="${img}" alt="${fav.title}" loading="lazy" width="100">
             <h4>${fav.title}</h4>
-            <button data-anime-id="${fav.mal_id}" class="remove-favorite-btn">Eliminar</button>
+            <button class="remove-favorite-btn">Eliminar</button>
         `;
 
-        animeCard.querySelector('.remove-favorite-btn').addEventListener('click', (e) => {
+        animeCard.querySelector('.remove-favorite-btn').addEventListener('click', () => {
             favorites = favorites.filter(f => f.mal_id !== fav.mal_id);
             localStorage.setItem('favorites', JSON.stringify(favorites));
             loadFavorites();
-            updateFavoriteIcons(fav.mal_id, false);
+            syncFavoritesUI();
         });
 
         favoritesListContainer.appendChild(animeCard);
     });
 }
 
-loadRecentAnimes();
+function syncFavoritesUI() {
+    document.querySelectorAll('.favorite-btn').forEach(btn => {
+        const card = btn.closest('.anime-card');
+        if (!card) return;
+
+        const id = parseInt(btn.dataset.animeId);
+
+        const isFav = favorites.some(f => f.mal_id === id);
+
+        btn.textContent = isFav
+            ? '❤️ Favorito'
+            : '♡ Añadir a favoritos';
+    });
+}
+
 if (typeof loadCategorizedAnimes === 'function') loadCategorizedAnimes();
 
 const translations = {
