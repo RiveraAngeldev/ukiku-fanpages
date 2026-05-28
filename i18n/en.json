@@ -1,0 +1,13 @@
+{
+  "nav_home": "Home",
+  "nav_list": "Anime List",
+  "nav_fav": "Favorites",
+  "nav_settings": "Settings",
+  "search_placeholder": "Search anime...",
+  "loading_animes": "Loading anime...",
+  "no_results": "No results found",
+  "watch_episode": "Watch episode",
+  "favorites_empty": "You don’t have any favorite anime yet",
+  "error_loading": "Error loading data",
+  "no_video": "No video available"
+}

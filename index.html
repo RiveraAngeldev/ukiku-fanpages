@@ -26,7 +26,7 @@
     </header>
 
     <section class="search-bar">
-        <input type="text" id="search-input" placeholder="Buscar anime..." data-i18n-placeholder="search_placeholder" oninput="searchAnime()">
+        <input type="text" id="search-input" placeholder="Buscar anime..." data-i18n-placeholder="search_placeholder">
     </section>
 
     <main>
@@ -115,8 +115,9 @@
             <div id="anime-details"></div>
         </section>
     </main>
-
+    
     <script src="main.js"></script>
+    <div id="modal" class="modal"></div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const loginLink = document.getElementById('login-link');

@@ -28,6 +28,12 @@ tabs.forEach(tab => {
         
         tabs.forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
+        searchInput.value = "";
+        recentAnimeContainer.innerHTML = "";
+
+        if (target === 'home') {
+            loadRecentAnimes();
+        }
 
         if (target === 'anime-list') {
             loadAllAnimes();
@@ -81,8 +87,8 @@ async function loadAllAnimes() {
             return new Promise(resolve => setTimeout(resolve, ms));
         }
 
-        while (page <= 80) {  
-            const response = await fetch(`https://api.jikan.moe/v4/anime?page=${page}`);
+        while (page <= 5) {  
+            const response = await fetch(`http://localhost:3000/api/animes?page=${page}`);
             if (!response.ok) throw new Error(`API error: ${response.status}`);
 
             const data = await response.json();
@@ -120,7 +126,7 @@ async function loadRecentAnimes() {
     const october2024 = new Date('2024-10-01');
 
     try {
-        const response = await fetch(`https://api.jikan.moe/v4/anime?start_date=2024-10-01&status=airing`);
+        const response = await fetch(`http://localhost:3000/api/recent`);
         if (!response.ok) {
             recentAnimeContainer.innerHTML = `<p>Error al contactar con la API de Jikan: ${response.status}</p>`;
             return;
@@ -215,7 +221,7 @@ function updateFavoriteIcons(animeId, isFavorite) {
 
 async function loadEpisodes(animeId, animeTitle) {
     try {
-        const response = await fetch(`https://api.jikan.moe/v4/anime/${animeId}/episodes`);
+        const response = await fetch(`http://localhost:3000/api/episodes/${animeId}`);
 
         if (!response.ok) {
             throw new Error(`API error: ${response.status}`);
@@ -248,9 +254,9 @@ async function loadEpisodes(animeId, animeTitle) {
                 ${episodes.length > 0
                     ? episodes.map((episode, index) => {
 
-                        const episodeNumber = episode.mal_id || (index + 1);
+                        const episodeNumber = index + 1;
 
-                        const watched = watchedList.includes(episode.mal_id);
+                        const watched = watchedList.includes(episodeNumber);
 
                         const watchLink = `http://localhost:3000/api/watch?anime=${encodeURIComponent(animeTitle)}&episode=${episodeNumber}`;
 
@@ -260,7 +266,7 @@ async function loadEpisodes(animeId, animeTitle) {
 
                     return `
                         <div class="episode-card"
-                            data-episode-id="${episode.mal_id}"
+                            data-episode-id="${episodeNumber}"
                             style="${watched
                                 ? 'border: 3px solid #ff6f61;'
                                 : 'border: 1px solid #ccc;'}">
@@ -319,8 +325,13 @@ document.addEventListener("click", async (e) => {
             alert("No video found");
             return;
         }
-        const player = document.getElementById("player");
-        player.src = data.url;      
+        const win = window.open(data.url, "_blank");
+
+        if (!win) {
+            alert("Permite pop-ups para ver el episodio");
+        }
+        sections.forEach(s => s.classList.remove('active'));
+        document.getElementById('episodes').classList.add('active');  
 
     } catch (err) {
         console.error("FULL ERROR:", err);
@@ -344,7 +355,7 @@ async function playEpisode(anime, episode) {
             return;
         }
 
-        document.getElementById("player").src = data.url;
+        openPlayer(data.url);
 
     } catch (err) {
         console.error(err);
@@ -497,6 +508,32 @@ function loadSettings() {
     if (datasaverToggle) datasaverToggle.checked = savedDataSaver;
 
     applyLanguage(savedLang);
+}
+
+function openPlayer(url) {
+    const player = document.getElementById("player");
+
+    try {
+        player.src = url;
+    } catch (e) {
+        console.log("iframe blocked, fallback to new tab");
+        window.open(url, "_blank");
+        return;
+    }
+
+    setTimeout(() => {
+        try {
+            if (!player.contentWindow) {
+                window.open(url, "_blank");
+            }
+        } catch (e) {
+            window.open(url, "_blank");
+        }
+    }, 3000);
+}
+
+function closeModal() {
+    document.getElementById("modal").style.display = "none";
 }
 
 if (themeToggle) {

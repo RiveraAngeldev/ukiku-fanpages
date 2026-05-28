@@ -1,0 +1,13 @@
+{
+  "nav_home": "Inicio",
+  "nav_list": "Lista de Animes",
+  "nav_fav": "Favoritos",
+  "nav_settings": "Configuración",
+  "search_placeholder": "Buscar anime...",
+  "loading_animes": "Cargando animes...",
+  "no_results": "No se encontraron resultados",
+  "watch_episode": "Ver episodio",
+  "favorites_empty": "No tienes animes favoritos aún",
+  "error_loading": "Error al cargar datos",
+  "no_video": "No hay video disponible"
+}
