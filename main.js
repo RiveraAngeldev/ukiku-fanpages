@@ -57,7 +57,7 @@ async function searchAnime() {
     }
 
     try {
-        const response = await fetch(`http://localhost:3000/api/search?q=${encodeURIComponent(searchText)}`);
+        const response = await fetch(`https://ukiku-backend.onrender.com/api/search?q=${encodeURIComponent(searchText)}`);
         if (!response.ok) throw new Error(`API error: ${response.status}`);
         const data = await response.json();
         const animes = data.data;
@@ -88,7 +88,7 @@ async function loadAllAnimes() {
         }
 
         while (page <= 5) {  
-            const response = await fetch(`http://localhost:3000/api/animes?page=${page}`);
+            const response = await fetch(`https://ukiku-backend.onrender.com/api/animes?page=${page}`);
             if (!response.ok) throw new Error(`API error: ${response.status}`);
 
             const data = await response.json();
@@ -126,7 +126,7 @@ async function loadRecentAnimes() {
     const october2024 = new Date('2024-10-01');
 
     try {
-        const response = await fetch(`http://localhost:3000/api/recent`);
+        const response = await fetch(`https://ukiku-backend.onrender.com/api/recent`);
         if (!response.ok) {
             recentAnimeContainer.innerHTML = `<p>Error al contactar con la API de Jikan: ${response.status}</p>`;
             return;
@@ -221,7 +221,7 @@ function updateFavoriteIcons(animeId, isFavorite) {
 
 async function loadEpisodes(animeId, animeTitle) {
     try {
-        const response = await fetch(`http://localhost:3000/api/episodes/${animeId}`);
+        const response = await fetch(`https://ukiku-backend.onrender.com/api/episodes/${animeId}`);
 
         if (!response.ok) {
             throw new Error(`API error: ${response.status}`);
@@ -258,7 +258,7 @@ async function loadEpisodes(animeId, animeTitle) {
 
                         const watched = watchedList.includes(episodeNumber);
 
-                        const watchLink = `http://localhost:3000/api/watch?anime=${encodeURIComponent(animeTitle)}&episode=${episodeNumber}`;
+                        const watchLink = `https://ukiku-backend.onrender.com/api/watch?anime=${encodeURIComponent(animeTitle)}&episode=${episodeNumber}`;
 
                         const fallback =
                             episode.url ||
@@ -314,7 +314,7 @@ document.addEventListener("click", async (e) => {
 
     try {
         const res = await fetch(
-            `http://localhost:3000/api/watch?anime=${encodeURIComponent(anime)}&episode=${episode}`
+            `https://ukiku-backend.onrender.com/api/watch?anime=${encodeURIComponent(anime)}&episode=${episode}`
         );
 
         const data = await res.json();
@@ -343,7 +343,7 @@ document.addEventListener("click", async (e) => {
 async function playEpisode(anime, episode) {
     try {
         const res = await fetch(
-            `http://localhost:3000/api/watch?anime=${encodeURIComponent(anime)}&episode=${episode}`
+            `https://ukiku-backend.onrender.com/api/watch?anime=${encodeURIComponent(anime)}&episode=${episode}`
         );
 
         const data = await res.json();
